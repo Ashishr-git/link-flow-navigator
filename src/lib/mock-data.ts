@@ -1,4 +1,3 @@
-
 import { NavLink } from "@/types/types";
 
 export const mockLinks: NavLink[] = [
@@ -91,6 +90,32 @@ export const mockLinks: NavLink[] = [
     upvotes: 9,
     downvotes: 1,
     clickCount: 65
+  },
+  {
+    id: 'pending1',
+    url: 'https://docs.example.com/api/v2',
+    description: 'Updated API documentation with new endpoints',
+    keywords: ['api', 'documentation', 'developer'],
+    platform: 'Web',
+    product: 'Developer Portal',
+    createdBy: 'Mike Wilson',
+    status: 'pending',
+    upvotes: 12,
+    downvotes: 2,
+    clickCount: 145
+  },
+  {
+    id: 'pending2',
+    url: 'https://dashboard.example.com/analytics',
+    description: 'Real-time analytics dashboard for product metrics',
+    keywords: ['analytics', 'dashboard', 'metrics'],
+    platform: 'Web',
+    product: 'Analytics Suite',
+    createdBy: 'Emma Davis',
+    status: 'pending',
+    upvotes: 8,
+    downvotes: 1,
+    clickCount: 89
   }
 ];
 
@@ -118,5 +143,38 @@ export const mockUsers = [
     name: "Dana White",
     email: "dana@example.com",
     role: "Contributor"
+  }
+];
+
+export const mockAnalytics = {
+  clicksOverTime: [
+    { date: '2025-04-01', clicks: 45, uniqueUsers: 32, searchClicks: 28, directClicks: 17 },
+    { date: '2025-04-02', clicks: 62, uniqueUsers: 41, searchClicks: 35, directClicks: 27 },
+    { date: '2025-04-03', clicks: 58, uniqueUsers: 39, searchClicks: 30, directClicks: 28 },
+    { date: '2025-04-04', clicks: 71, uniqueUsers: 52, searchClicks: 42, directClicks: 29 },
+    { date: '2025-04-05', clicks: 89, uniqueUsers: 63, searchClicks: 51, directClicks: 38 },
+    { date: '2025-04-06', clicks: 95, uniqueUsers: 70, searchClicks: 58, directClicks: 37 },
+    { date: '2025-04-07', clicks: 86, uniqueUsers: 58, searchClicks: 49, directClicks: 37 },
+  ]
+};
+
+export const mockWorkflowHistory = [
+  {
+    id: '1',
+    navLinkId: 'link1',
+    stage: 'Manager',
+    status: 'approved',
+    reviewer: 'John Smith',
+    comments: 'Approved after reviewing content and metadata',
+    timestamp: new Date('2025-04-15T10:30:00'),
+  },
+  {
+    id: '2',
+    navLinkId: 'link1',
+    stage: 'CoreTeam',
+    status: 'approved',
+    reviewer: 'Sarah Johnson',
+    comments: 'Verified alignment with navigation standards',
+    timestamp: new Date('2025-04-16T14:20:00'),
   }
 ];

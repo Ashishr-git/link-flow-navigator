@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +9,8 @@ import { NavLink } from "@/types/types";
 import { ArrowLeft, ExternalLink, Clock, CheckCircle, AlertCircle, BarChart4, History, MessageCircle, Edit, Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
+import AnalyticsChart from '@/components/AnalyticsChart';
+import { mockWorkflowHistory } from '@/lib/mock-data';
 
 const LinkDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -186,12 +187,34 @@ const LinkDetails = () => {
                         <p className="text-gray-500">Analytics chart will be displayed here</p>
                       </div>
                     </div>
+                    
+                    <AnalyticsChart />
                   </div>
                 </TabsContent>
                 
                 <TabsContent value="history">
-                  <div className="text-center py-10">
-                    <p className="text-gray-500">No version history available for this link.</p>
+                  <div className="space-y-4">
+                    {mockWorkflowHistory.map((step) => (
+                      <div key={step.id} className="bg-gray-50 p-4 rounded-lg border">
+                        <div className="flex items-start">
+                          <div className="mt-1">
+                            <CheckCircle className="h-5 w-5 text-green-500" />
+                          </div>
+                          <div className="ml-3">
+                            <h4 className="font-medium">{step.stage} Review</h4>
+                            <p className="text-sm text-gray-500">
+                              {step.status === 'approved' ? 'Approved' : 'Rejected'} by {step.reviewer} on{' '}
+                              {new Date(step.timestamp).toLocaleDateString()}
+                            </p>
+                            {step.comments && (
+                              <div className="mt-2 text-sm bg-white p-3 rounded border">
+                                <p className="italic">"{step.comments}"</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </TabsContent>
                 

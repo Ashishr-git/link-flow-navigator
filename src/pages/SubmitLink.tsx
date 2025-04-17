@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -11,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Loader2, Upload } from "lucide-react";
+import { PlusCircle, Loader2, Upload, Wand2 } from "lucide-react";
 
 const submitSchema = z.object({
   url: z.string().url({ message: "Please enter a valid URL" }),
@@ -62,6 +61,14 @@ const SubmitLink = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleGenerateFromScreenshot = () => {
+    // This would integrate with an AI service in production
+    toast({
+      title: "Screenshot Analysis",
+      description: "AI analysis of screenshots will be available in the next release",
+    });
   };
 
   return (
@@ -187,10 +194,27 @@ const SubmitLink = () => {
               
               <div>
                 <p className="text-sm font-medium mb-2">Screenshot (optional)</p>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center">
-                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-500 mb-1">Drag & drop a screenshot or</p>
-                  <Button type="button" variant="outline">Browse Files</Button>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                  <div className="flex flex-col items-center justify-center gap-4">
+                    <Upload className="h-8 w-8 text-gray-400" />
+                    <p className="text-sm text-gray-500 text-center">
+                      Drag & drop a screenshot or click below
+                    </p>
+                    <div className="flex gap-2">
+                      <Button type="button" variant="outline">
+                        Browse Files
+                      </Button>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        className="flex items-center gap-2"
+                        onClick={handleGenerateFromScreenshot}
+                      >
+                        <Wand2 className="h-4 w-4" />
+                        Generate Details
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
               
