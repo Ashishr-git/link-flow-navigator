@@ -122,20 +122,47 @@ export const mockLinks: NavLink[] = [
 export const mockVersionHistory = [
   {
     id: '1',
-    linkId: '3',
-    versionNumber: 2,
-    changes: "Updated API documentation structure and examples",
-    modifiedBy: "charlie@example.com",
-    timestamp: new Date('2025-04-16T14:20:00'),
+    linkId: '1',
+    versionNumber: 3,
+    changes: "Updated deployment configuration and added new API endpoints",
+    modifiedBy: "alice@example.com",
+    timestamp: new Date('2025-04-18T16:45:00'),
     status: "pending"
   },
   {
     id: '2',
-    linkId: '3',
+    linkId: '1',
+    versionNumber: 2,
+    changes: "Improved documentation structure and added code examples",
+    modifiedBy: "bob@example.com",
+    timestamp: new Date('2025-04-16T14:20:00'),
+    status: "approved"
+  },
+  {
+    id: '3',
+    linkId: '1',
     versionNumber: 1,
-    changes: "Initial version of API documentation",
-    modifiedBy: "charlie@example.com",
+    changes: "Initial version with basic documentation",
+    modifiedBy: "alice@example.com",
     timestamp: new Date('2025-04-10T10:30:00'),
+    status: "approved"
+  },
+  {
+    id: '4',
+    linkId: '2',
+    versionNumber: 2,
+    changes: "Added new component documentation and usage guidelines",
+    modifiedBy: "charlie@example.com",
+    timestamp: new Date('2025-04-17T11:25:00'),
+    status: "approved"
+  },
+  {
+    id: '5',
+    linkId: '2',
+    versionNumber: 1,
+    changes: "Initial design system documentation",
+    modifiedBy: "bob@example.com",
+    timestamp: new Date('2025-04-12T09:15:00'),
     status: "approved"
   }
 ];

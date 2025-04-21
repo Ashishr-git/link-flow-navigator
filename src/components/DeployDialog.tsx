@@ -35,9 +35,11 @@ const DeployDialog = ({ isOpen, onClose, linkData }: DeployDialogProps) => {
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4">
-          <pre className="bg-gray-50 p-4 rounded-lg overflow-auto max-h-[400px] text-sm">
-            {JSON.stringify(linkData, null, 2)}
-          </pre>
+          <div className="bg-gray-50 p-4 rounded-lg max-h-[400px] overflow-y-auto">
+            <pre className="whitespace-pre-wrap break-words text-sm">
+              {JSON.stringify(linkData, null, 2)}
+            </pre>
+          </div>
         </div>
         <DialogFooter className="mt-6">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
