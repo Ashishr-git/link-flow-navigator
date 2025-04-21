@@ -31,6 +31,7 @@ const SubmitLink = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showApiInput, setShowApiInput] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   
   const form = useForm<SubmitFormValues>({
@@ -79,9 +80,14 @@ const SubmitLink = () => {
       return;
     }
 
+    const storedApiKey = localStorage.getItem('gemini_api_key');
+    if (!storedApiKey) {
+      setShowApiInput(true);
+      return;
+    }
+
     setIsGenerating(true);
     try {
-      console.log('Starting image analysis for file:', selectedFile.name);
       const result = await analyzeImage(selectedFile);
       
       // Update form fields with the generated data
@@ -100,11 +106,7 @@ const SubmitLink = () => {
       let errorMessage = "Failed to analyze the image. Please try again.";
       
       if (error instanceof Error) {
-        if (error.message.includes('API key')) {
-          errorMessage = "Gemini API key is not configured. Please check your .env file.";
-        } else {
-          errorMessage = error.message;
-        }
+        errorMessage = error.message;
       }
 
       toast({
@@ -114,7 +116,13 @@ const SubmitLink = () => {
       });
     } finally {
       setIsGenerating(false);
+      setShowApiInput(false);
     }
+  };
+
+  const handleApiKeySubmit = (key: string) => {
+    setShowApiInput(false);
+    handleGenerateFromScreenshot();
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -299,6 +307,10 @@ const SubmitLink = () => {
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
+                      {showApiInput && (
+                        <GeminiKeyInput onKeySubmit={handleApiKeySubmit} />
+                      )}
+                      
                       <Button 
                         type="button" 
                         variant="outline" 
