@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PlusCircle, Loader2, Upload, Wand2, FileImage, X } from "lucide-react";
 import React from "react";
 import { analyzeImage } from "@/api/analyzeImage";
+import { GeminiKeyInput } from "@/components/GeminiKeyInput";
 
 const submitSchema = z.object({
   url: z.string().url({ message: "Please enter a valid URL" }),
@@ -266,6 +267,11 @@ const SubmitLink = () => {
               </div>
               
               <Separator />
+              
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Gemini API Settings</h3>
+                <GeminiKeyInput />
+              </div>
               
               <div>
                 <p className="text-sm font-medium mb-2">Screenshot (optional)</p>

@@ -1,9 +1,12 @@
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function analyzeImage(image: File) {
   try {
-    if (!import.meta.env.VITE_GEMINI_API_KEY) {
-      throw new Error('Gemini API key not found in Supabase environment variables');
+    const storedApiKey = localStorage.getItem('gemini_api_key');
+    
+    if (!storedApiKey) {
+      throw new Error('Please provide a Gemini API key in the settings above');
     }
 
     console.log('Starting image analysis...');
@@ -18,8 +21,8 @@ export async function analyzeImage(image: File) {
 
     console.log('Image converted to base64, length:', base64Image.length);
 
-    // Initialize the Gemini API with the key from Supabase
-    const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+    // Initialize the Gemini API with the stored key
+    const genAI = new GoogleGenerativeAI(storedApiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
 
     // Create a prompt for image analysis

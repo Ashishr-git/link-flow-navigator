@@ -215,13 +215,6 @@ const LinkDetails = () => {
                       </Card>
                     </div>
                     
-                    <div>
-                      <h3 className="text-lg font-semibold mb-4">Click History</h3>
-                      <div className="h-64 bg-gray-50 flex items-center justify-center rounded-lg border">
-                        <p className="text-gray-500">Analytics chart will be displayed here</p>
-                      </div>
-                    </div>
-                    
                     <AnalyticsChart />
                   </div>
                 </TabsContent>
