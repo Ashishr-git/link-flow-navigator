@@ -119,6 +119,27 @@ export const mockLinks: NavLink[] = [
   }
 ];
 
+export const mockVersionHistory = [
+  {
+    id: '1',
+    linkId: '3',
+    versionNumber: 2,
+    changes: "Updated API documentation structure and examples",
+    modifiedBy: "charlie@example.com",
+    timestamp: new Date('2025-04-16T14:20:00'),
+    status: "pending"
+  },
+  {
+    id: '2',
+    linkId: '3',
+    versionNumber: 1,
+    changes: "Initial version of API documentation",
+    modifiedBy: "charlie@example.com",
+    timestamp: new Date('2025-04-10T10:30:00'),
+    status: "approved"
+  }
+];
+
 export const mockUsers = [
   {
     id: "1",

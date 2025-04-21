@@ -1,4 +1,3 @@
-
 export interface NavLink {
   id: string;
   url: string;
@@ -34,9 +33,10 @@ export interface WorkflowStep {
 
 export interface Version {
   id: string;
-  navLinkId: string;
+  linkId: string;
   versionNumber: number;
   changes: string;
   modifiedBy: string;
   timestamp: Date;
+  status: "pending" | "approved";
 }

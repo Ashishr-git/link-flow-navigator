@@ -4,19 +4,43 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { mockLinks } from "@/lib/mock-data";
+import { mockLinks, mockWorkflowHistory, mockVersionHistory } from "@/lib/mock-data";
 import { NavLink } from "@/types/types";
-import { ArrowLeft, ExternalLink, Clock, CheckCircle, AlertCircle, BarChart4, History, MessageCircle, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Clock, CheckCircle, AlertCircle, BarChart4, History, MessageCircle, Edit, Trash2, Rocket } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import AnalyticsChart from '@/components/AnalyticsChart';
-import { mockWorkflowHistory } from '@/lib/mock-data';
+import DeployDialog from "@/components/DeployDialog";
+import { analyzeImage } from "@/api/analyzeImage";
+
+// Custom Info icon to match Lucide style
+const InfoIcon = (props: React.SVGProps<SVGSVGElement>) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4" />
+      <path d="M12 8h.01" />
+    </svg>
+  );
+};
 
 const LinkDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [link, setLink] = useState<NavLink | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeployDialogOpen, setIsDeployDialogOpen] = useState(false);
   
   useEffect(() => {
     // Simulate API fetch
@@ -98,6 +122,16 @@ const LinkDetails = () => {
                   <Trash2 className="mr-1 h-4 w-4" />
                   Delete
                 </Button>
+                {link?.status === "approved" && (
+                  <Button 
+                    size="sm" 
+                    className="flex items-center bg-blue-600 hover:bg-blue-700 animate-pulse"
+                    onClick={() => setIsDeployDialogOpen(true)}
+                  >
+                    <Rocket className="mr-1 h-4 w-4" />
+                    Deploy
+                  </Button>
+                )}
               </div>
             </CardHeader>
             
@@ -112,9 +146,9 @@ const LinkDetails = () => {
                     <BarChart4 className="mr-1 h-4 w-4" />
                     Analytics
                   </TabsTrigger>
-                  <TabsTrigger value="history" className="flex items-center">
+                  <TabsTrigger value="versions" className="flex items-center">
                     <History className="mr-1 h-4 w-4" />
-                    History
+                    Version History
                   </TabsTrigger>
                   <TabsTrigger value="workflow" className="flex items-center">
                     <MessageCircle className="mr-1 h-4 w-4" />
@@ -192,26 +226,28 @@ const LinkDetails = () => {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="history">
+                <TabsContent value="versions">
                   <div className="space-y-4">
-                    {mockWorkflowHistory.map((step) => (
-                      <div key={step.id} className="bg-gray-50 p-4 rounded-lg border">
-                        <div className="flex items-start">
-                          <div className="mt-1">
-                            <CheckCircle className="h-5 w-5 text-green-500" />
+                    {mockVersionHistory
+                      .filter(v => v.linkId === id)
+                      .map((version) => (
+                      <div key={version.id} className="bg-gray-50 p-4 rounded-lg border">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="font-medium">Version {version.versionNumber}</h4>
+                            <p className="text-sm text-gray-500 mt-1">{version.changes}</p>
+                            <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
+                              <span>Modified by {version.modifiedBy}</span>
+                              <span>•</span>
+                              <span>{version.timestamp.toLocaleString()}</span>
+                            </div>
                           </div>
-                          <div className="ml-3">
-                            <h4 className="font-medium">{step.stage} Review</h4>
-                            <p className="text-sm text-gray-500">
-                              {step.status === 'approved' ? 'Approved' : 'Rejected'} by {step.reviewer} on{' '}
-                              {new Date(step.timestamp).toLocaleDateString()}
-                            </p>
-                            {step.comments && (
-                              <div className="mt-2 text-sm bg-white p-3 rounded border">
-                                <p className="italic">"{step.comments}"</p>
-                              </div>
-                            )}
-                          </div>
+                          <Badge className={
+                            version.status === 'approved' ? 'bg-green-100 text-green-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }>
+                            {version.status.charAt(0).toUpperCase() + version.status.slice(1)}
+                          </Badge>
                         </div>
                       </div>
                     ))}
@@ -221,13 +257,12 @@ const LinkDetails = () => {
                 <TabsContent value="workflow">
                   <div className="space-y-6">
                     <h3 className="text-lg font-semibold mb-2">Approval Workflow</h3>
-                    
                     <div className="space-y-4">
                       <div className="flex items-start">
                         <div className="mt-1">
-                          {link.status === "approved" ? (
+                          {link?.status === "approved" ? (
                             <CheckCircle className="h-5 w-5 text-green-500" />
-                          ) : link.status === "pending" ? (
+                          ) : link?.status === "pending" ? (
                             <Clock className="h-5 w-5 text-yellow-500" />
                           ) : (
                             <AlertCircle className="h-5 w-5 text-red-500" />
@@ -236,36 +271,39 @@ const LinkDetails = () => {
                         <div className="ml-3">
                           <h4 className="font-medium">Manager Review</h4>
                           <p className="text-sm text-gray-500">
-                            {link.status === "approved"
+                            {link?.status === "approved"
                               ? "Approved by John Smith on April 15, 2025"
-                              : link.status === "pending"
+                              : link?.status === "pending"
                               ? "Pending review since April 10, 2025"
                               : "Rejected by John Smith on April 15, 2025"}
                           </p>
-                          {link.status === "rejected" && (
+                          {link?.status === "rejected" && (
                             <div className="mt-2 text-sm bg-gray-50 p-3 rounded border">
                               <p className="italic">
-                                "Please provide more context about the purpose of this link and how
-                                it relates to our product ecosystem."
+                                "Please provide more context about the purpose of this link."
                               </p>
                             </div>
                           )}
                         </div>
                       </div>
-                      
-                      {link.status === "approved" && (
-                        <div className="flex items-start">
-                          <div className="mt-1">
+
+                      <div className="flex items-start">
+                        <div className="mt-1">
+                          {link?.status === "approved" ? (
                             <CheckCircle className="h-5 w-5 text-green-500" />
-                          </div>
-                          <div className="ml-3">
-                            <h4 className="font-medium">Core Team Review</h4>
-                            <p className="text-sm text-gray-500">
-                              Approved by Core Team on April 16, 2025
-                            </p>
-                          </div>
+                          ) : (
+                            <Clock className="h-5 w-5 text-gray-300" />
+                          )}
                         </div>
-                      )}
+                        <div className="ml-3">
+                          <h4 className="font-medium">Core Team Review</h4>
+                          <p className="text-sm text-gray-500">
+                            {link?.status === "approved"
+                              ? "Approved by Core Team on April 16, 2025"
+                              : "Waiting for manager approval"}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </TabsContent>
@@ -326,29 +364,13 @@ const LinkDetails = () => {
           </Card>
         </div>
       </div>
-    </div>
-  );
-};
 
-// Custom Info icon to match Lucide style
-const InfoIcon = (props: React.SVGProps<SVGSVGElement>) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 16v-4" />
-      <path d="M12 8h.01" />
-    </svg>
+      <DeployDialog 
+        isOpen={isDeployDialogOpen}
+        onClose={() => setIsDeployDialogOpen(false)}
+        linkData={link}
+      />
+    </div>
   );
 };
 
