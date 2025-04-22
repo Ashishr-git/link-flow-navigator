@@ -1,4 +1,3 @@
-
 export interface NavLink {
   id: string;
   url: string;
@@ -9,7 +8,7 @@ export interface NavLink {
   subproduct?: string;
   screenshotPath?: string;
   createdBy: string;
-  status: "pending" | "approved" | "rejected" | "deployed";
+  status: "pending" | "approved" | "rejected";
   upvotes: number;
   downvotes: number;
   clickCount: number;
@@ -25,13 +24,11 @@ export interface User {
 export interface WorkflowStep {
   id: string;
   navLinkId: string;
-  stage: "Manager" | "CoreTeam" | "Deployment";
-  status: "pending" | "approved" | "rejected" | "deployed";
+  stage: "Manager" | "CoreTeam";
+  status: "pending" | "approved" | "rejected";
   reviewer?: string;
   comments?: string;
   timestamp: Date;
-  deployedBy?: string;
-  deploymentNotes?: string;
 }
 
 export interface Version {
